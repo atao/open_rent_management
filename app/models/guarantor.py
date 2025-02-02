@@ -1,21 +1,19 @@
 import datetime
-from sqlalchemy import Column, DateTime, Integer, String, ForeignKey
-from sqlalchemy.orm import relationship
-from app.models.base import Base
-
-# Base = declarative_base()
+from sqlalchemy import DateTime, ForeignKey, String
+from sqlalchemy.orm import relationship, Mapped, mapped_column
+from .base import Base
 
 class Guarantor(Base):
     __tablename__ = 'guarantors'
 
-    firstname = Column(String, index=True)
-    surname = Column(String, index=True)
-    description = Column(String, nullable=True)
-    date_of_birth = Column(DateTime, default=datetime.datetime.utcnow)
-    email = Column(String, index=True)
-    phone = Column(String, index=True)
-    address_id = Column(Integer, ForeignKey('addresses.id'))
-    tenant_id = Column(Integer, ForeignKey('tenants.id'))
+    firstname: Mapped[str] = mapped_column(String, index=True)
+    surname: Mapped[str] = mapped_column(String, index=True)
+    description: Mapped[str] = mapped_column(String, nullable=True)
+    date_of_birth: Mapped[datetime.datetime] = mapped_column(DateTime, default=datetime.datetime.utcnow)
+    email: Mapped[str] = mapped_column(String, index=True)
+    phone: Mapped[str] = mapped_column(String, index=True)
+    address_id: Mapped[int] = mapped_column(ForeignKey('addresses.id'), nullable=True)
+    tenant_id: Mapped[int] = mapped_column(ForeignKey('tenants.id'), nullable=True)
 
-    tenant = relationship("Tenant", back_populates="guarantors")
-    address = relationship("Address", back_populates="guarantors")
+    address: Mapped["Address"] = relationship("Address", back_populates="guarantors")
+    tenant: Mapped["Tenant"] = relationship("Tenant", back_populates="guarantors")

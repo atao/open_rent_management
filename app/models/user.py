@@ -1,11 +1,12 @@
-from sqlalchemy import Column, String
-from sqlalchemy.orm import relationship
-from app.models.base import Base
+from sqlalchemy import String
+from sqlalchemy.orm import relationship, Mapped, mapped_column
+from .base import Base
 
 class User(Base):
     __tablename__ = 'users'
-    email = Column(String, index=True)
-    password = Column(String, index=True)
 
-    tenants = relationship("Tenant", back_populates="user")
-    property_managers = relationship("PropertyManager", back_populates="user")
+    email: Mapped[str] = mapped_column(String, index=True, unique=True, nullable=False)
+    password: Mapped[str] = mapped_column(String, nullable=False)
+
+    tenants: Mapped[list["Tenant"]] = relationship("Tenant", back_populates="user")
+    property_managers: Mapped[list["PropertyManager"]] = relationship("PropertyManager", back_populates="user")

@@ -1,13 +1,13 @@
-from sqlalchemy import JSON, Column, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
-from app.models.base import Base
+from sqlalchemy import JSON, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship, Mapped, mapped_column
+from .base import Base
 
 class Inventory(Base):
     __tablename__ = 'inventories'
 
-    name = Column(String, index=True)
-    description = Column(String, nullable=True)
-    property_id = Column(Integer, ForeignKey('properties.id'), nullable=False)
-    rooms = Column(JSON, nullable=True)
+    name: Mapped[str] = mapped_column(String, index=True)
+    description: Mapped[str] = mapped_column(String, nullable=True)
+    property_id: Mapped[int] = mapped_column(Integer, ForeignKey('properties.id'), nullable=False)
+    rooms: Mapped[dict] = mapped_column(JSON, nullable=True)
 
-    property = relationship("Property", back_populates="inventories")
+    property: Mapped["Property"] = relationship("Property", back_populates="inventories")

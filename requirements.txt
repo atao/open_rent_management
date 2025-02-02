@@ -14,3 +14,4 @@ sqlalchemy
 psycopg2-binary
 python-dotenv
 alembic
+pydantic[email]

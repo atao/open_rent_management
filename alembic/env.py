@@ -7,13 +7,14 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from app.models.base import Base
+from app.models import Base
 from app.models.tenant import Tenant
 from app.models.rental import Rental
 from app.models.address import Address
 from app.models.guarantor import Guarantor
 from app.models.inventory import Inventory
 from app.models.property import Property
+from app.models.payment import Payment
 from app.models.user import User
 from app.models.property_manager import PropertyManager
 

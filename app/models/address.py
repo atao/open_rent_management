@@ -1,18 +1,17 @@
-from sqlalchemy import Column, String
-from sqlalchemy.orm import relationship
-from app.models.base import Base
-
+from sqlalchemy import String
+from sqlalchemy.orm import relationship, Mapped, mapped_column
+from .base import Base
 class Address(Base):
     __tablename__ = 'addresses'
 
-    street = Column(String, index=True)
-    city = Column(String, index=True)
-    state = Column(String, index=True)
-    postal_code = Column(String, index=True)
-    country = Column(String, index=True)
-    description = Column(String, nullable=True)
+    street: Mapped[str] = mapped_column(String, index=True)
+    city: Mapped[str] = mapped_column(String, index=True)
+    state: Mapped[str] = mapped_column(String, index=True)
+    postal_code: Mapped[str] = mapped_column(String, index=True)
+    country: Mapped[str] = mapped_column(String, index=True)
+    description: Mapped[str] = mapped_column(String, nullable=True)
 
-    tenants = relationship("Tenant", back_populates="adress")
-    properties = relationship("Property", back_populates="adress")
-    guarantors = relationship("Guarantor", back_populates="adress")
-    property_managers = relationship("PropertyManager", back_populates="address")
+    tenants: Mapped[list["Tenant"]] = relationship("Tenant", back_populates="address")
+    properties: Mapped[list["Property"]] = relationship("Property", back_populates="address")
+    guarantors: Mapped[list["Guarantor"]] = relationship("Guarantor", back_populates="address")
+    property_managers: Mapped[list["PropertyManager"]] = relationship("PropertyManager", back_populates="address")

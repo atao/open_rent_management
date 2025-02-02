@@ -1,19 +1,19 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import relationship
-from app.models.base import Base
 
-# Base = declarative_base()
+from sqlalchemy import ForeignKey, Integer, String
+from sqlalchemy.orm import relationship, Mapped, mapped_column
+from .base import Base
 
 class PropertyManager(Base):
     __tablename__ = 'property_managers'
 
-    # id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String, nullable=False)
-    email = Column(String, unique=True, nullable=False)
-    phone_number = Column(String, nullable=False)
-    address_id = Column(Integer, ForeignKey('addresses.id'), nullable=True)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=True)
+    firstname: Mapped[str] = mapped_column(String, nullable=False)
+    surname: Mapped[str] = mapped_column(String, nullable=False)
+    title: Mapped[str] = mapped_column(String, nullable=False)
+    email: Mapped[str] = mapped_column(String, unique=True, nullable=False)
+    phone_number: Mapped[str] = mapped_column(String, nullable=False)
+    address_id: Mapped[int] = mapped_column(Integer, ForeignKey('addresses.id'), nullable=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'), nullable=True)
 
-    adress = relationship("Adress", back_populates="property_managers")
-    user = relationship("User", back_populates="property_managers")
-    properties = relationship("Property", back_populates="property_manager")
+    address: Mapped["Address"] = relationship("Address", back_populates="property_managers")
+    user: Mapped["User"] = relationship("User", back_populates="property_managers")
+    properties: Mapped[list["Property"]] = relationship("Property", back_populates="property_manager")
