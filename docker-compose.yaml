@@ -1,0 +1,37 @@
+name: property_manager
+services:
+  postgres:
+    image: postgres:latest
+    restart: always
+    container_name: postgres_image
+    ports:
+      - "${PG_PORT}:5432"
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=${PG_PASSWORD}
+      - PG_USER=${PG_USER}
+      - POSTGRES_DB=postgres
+    networks:
+      - property_manager-network
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "henry.delabareyre@gmail.com"
+      PGADMIN_DEFAULT_PASSWORD: "${PG_PASSWORD}"
+      SCRIPT_NAME: /pgadmin
+      PGADMIN_LISTEN_PORT: 80
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    ports:
+      - 5050:80
+    networks:
+      - property_manager-network
+networks:
+  property_manager-network:
+    driver: bridge
+volumes:
+  postgres:
+  pgadmin:
