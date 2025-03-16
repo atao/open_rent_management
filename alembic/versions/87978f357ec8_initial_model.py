@@ -1,8 +1,8 @@
-"""Initial migration
+"""Initial model
 
-Revision ID: 42ee39593c9e
+Revision ID: 87978f357ec8
 Revises: 
-Create Date: 2025-02-02 17:25:06.010909
+Create Date: 2025-03-16 15:53:00.424099
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '42ee39593c9e'
+revision: str = '87978f357ec8'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -41,6 +41,8 @@ def upgrade() -> None:
     op.create_table('users',
     sa.Column('email', sa.String(), nullable=False),
     sa.Column('password', sa.String(), nullable=False),
+    sa.Column('full_name', sa.String(), nullable=False),
+    sa.Column('disabled', sa.Boolean(), nullable=False),
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('date_created', sa.DateTime(), nullable=True),
     sa.Column('date_updated', sa.DateTime(), nullable=True),
@@ -49,7 +51,9 @@ def upgrade() -> None:
     )
     op.create_index(op.f('ix_users_email'), 'users', ['email'], unique=True)
     op.create_table('property_managers',
-    sa.Column('name', sa.String(), nullable=False),
+    sa.Column('firstname', sa.String(), nullable=False),
+    sa.Column('surname', sa.String(), nullable=False),
+    sa.Column('title', sa.String(), nullable=False),
     sa.Column('email', sa.String(), nullable=False),
     sa.Column('phone_number', sa.String(), nullable=False),
     sa.Column('address_id', sa.Integer(), nullable=True),
@@ -109,7 +113,7 @@ def upgrade() -> None:
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('description', sa.String(), nullable=True),
     sa.Column('address_id', sa.Integer(), nullable=True),
-    sa.Column('property_manager_id', sa.Integer(), nullable=True),
+    sa.Column('property_manager_id', sa.Integer(), nullable=False),
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('date_created', sa.DateTime(), nullable=True),
     sa.Column('date_updated', sa.DateTime(), nullable=True),
