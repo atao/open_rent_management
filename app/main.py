@@ -1,4 +1,3 @@
-from fastapi.security import OAuth2PasswordBearer
 from app.api.v1.endpoints import address_controller, property_controller, property_manager_controller, tenant_controller, user_controller
 from app.models.base import Base
 from fastapi import FastAPI

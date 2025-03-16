@@ -24,11 +24,12 @@ __all__ = [
     "PropertyUpdate",
     "AddressCreate",
     "AddressUpdate",
+    "UserCreate",
+    "UserBase",
     # "RentalCreate",
     # "AddressCreate",
     # "GuarantorCreate",
     # "InventoryCreate",
     # "PropertyCreate",
     # "PaymentCreate",
-    # "UserCreate",
 ]

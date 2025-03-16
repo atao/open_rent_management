@@ -1,6 +1,4 @@
-from pydantic import BaseModel
+from app.schemas.user_base import UserBase
 
-class UserCreate(BaseModel):
-    email: str | None = None
-    full_name: str | None = None
-    disabled: bool | None = None
+class UserCreate(UserBase):
+    password: str

@@ -41,6 +41,19 @@ class AuthenticationService:
         if not self.verify_password(password, user.password):
             return False
         return user
+    
+    def is_password_secure(self, password: str):
+        if len(password) < 8:
+            return False
+        if not any(char.isupper() for char in password):
+            return False
+        if not any(char.islower() for char in password):
+            return False
+        if not any(char.isdigit() for char in password):
+            return False
+        if not any(char in "!@#$%^&*()-+" for char in password):
+            return False
+        return True
 
     def create_access_token(self, data: dict, expires_delta: timedelta | None = None):
         to_encode = data.copy()
