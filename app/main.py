@@ -14,6 +14,6 @@ app.include_router(property_controller.router, prefix="/api/v1")
 app.include_router(address_controller.router, prefix="/api/v1")
 app.include_router(user_controller.router, prefix="/api/v1")
 
-@app.get("/")
+@app.get('/api/healthchecker')
 def read_root():
-    return {"Hello": "World"}
+    return {'message': 'Hello World'}

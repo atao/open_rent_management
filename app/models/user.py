@@ -9,6 +9,7 @@ class User(Base):
     password: Mapped[str] = mapped_column(String, nullable=False)
     full_name: Mapped[str] = mapped_column(String, nullable=False)
     disabled: Mapped[bool] = mapped_column(Boolean, default=False)
+    #TODO ADD ROLE
 
     tenants: Mapped[list["Tenant"]] = relationship("Tenant", back_populates="user")
     property_managers: Mapped[list["PropertyManager"]] = relationship("PropertyManager", back_populates="user")
