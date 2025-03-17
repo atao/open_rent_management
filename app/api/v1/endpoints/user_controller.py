@@ -73,6 +73,16 @@ async def create_user(
     db.refresh(user)
     return UserResponse.model_validate(user)
 
+@router.post("/logout/")
+async def logout(
+    refresh_token: str,
+    auth_service: AuthenticationService = Depends(get_auth_service)
+):
+    return HTTPException(
+        status_code=status.HTTP_501_NOT_IMPLEMENTED,
+        detail="Logout is not implemented"
+    )
+
 @router.get("/users/me/")
 async def read_users_me(
     current_user: User = Depends(get_auth_service().get_current_active_user)
