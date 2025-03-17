@@ -2,8 +2,8 @@ from datetime import datetime
 
 from app.schemas.user_base import UserBase
 
-class UserResponse(UserBase):
 
+class UserResponse(UserBase):
     id: int
     date_created: datetime
     date_updated: datetime

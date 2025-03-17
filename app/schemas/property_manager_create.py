@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
 
+
 class PropertyManagerCreate(BaseModel):
     firstname: str
     surname: str

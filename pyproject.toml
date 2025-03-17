@@ -124,10 +124,12 @@ init_typed = true
 warn_required_dynamic_aliases = true
 warn_untyped_fields = true
 
-# This file contains python tools configuration at the root level for vscode
 [tool.black]
 line-length = 120
 skip-string-normalization = false
+
+[tool.ruff]
+line-length = 120
 
 [tool.isort]
 profile = "black"

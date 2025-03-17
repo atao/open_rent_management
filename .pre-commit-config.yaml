@@ -32,14 +32,16 @@ repos:
       - id: ruff
         name: ruff
         files: ^app/
-        args: ["--fix"]
+        args: ["--fix", "--config=pyproject.toml"]
       - id: ruff-format
         name: ruff-format
         files: ^app
+        args: ["--config=pyproject.toml"]
   - repo: https://github.com/psf/black
-    rev: stable
+    rev: 23.3.0
     hooks:
       - id: black
         name: black
         language_version: python3.12
         files: ^app/
+        args: ["--config", "pyproject.toml"]
