@@ -7,7 +7,7 @@ from app.models.user import User
 from app.schemas.token import RefreshToken, Token
 from app.schemas.user_create import UserCreate
 from app.schemas.user_response import UserResponse
-from app.services.authentication_service import ACCESS_TOKEN_EXPIRE_MINUTES, AuthenticationService
+from app.services.authentication_service import AuthenticationService
 from sqlalchemy.orm import Session
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/token")

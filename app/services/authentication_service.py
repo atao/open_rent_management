@@ -1,6 +1,4 @@
 from datetime import datetime, timedelta, timezone
-import os
-from dotenv import load_dotenv
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from typing_extensions import Annotated
@@ -9,17 +7,9 @@ from jwt.exceptions import InvalidTokenError
 import jwt
 from sqlalchemy.orm import Session
 
+from app.core.config import Settings
 from app.models.user import User
-from app.schemas.token import RefreshToken, Token, TokenData
-
-load_dotenv()
-
-# to get a string like this run:
-# openssl rand -hex 32
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
-REFRESH_TOKEN_EXPIRE_DAYS = 7
-
+from app.schemas.token import RefreshToken, TokenData
 
 class AuthenticationService:
     def __init__(self, oauth2_scheme: Annotated[OAuth2PasswordBearer, Depends], 
@@ -29,15 +19,14 @@ class AuthenticationService:
         self.pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
     def get_secret_key(self):
-        SECRET_KEY = os.getenv("SECRET_KEY")
-        if SECRET_KEY is None:
+        if Settings.secret_key is None:
             raise ValueError("SECRET_KEY environment variable is not set")
-        return SECRET_KEY
+        return Settings.secret_key
     
     def get_payload(self, token: str):
         if(token is None):
             return None
-        return jwt.decode(token, self.get_secret_key(), algorithms=[ALGORITHM])
+        return jwt.decode(token, self.get_secret_key(), algorithms=[Settings.algorithm])
 
 
     def verify_password(self, plain_password, hashed_password):
@@ -69,10 +58,10 @@ class AuthenticationService:
     
     def login(self, email: str) -> RefreshToken:
         access_token = self.create_access_token(
-            data={"sub": email}, expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+            data={"sub": email}, expires_delta=timedelta(minutes=Settings.ACCESS_TOKEN_EXPIRE_MINUTES)
         )
         refresh_token = self.create_access_token(
-            data={"sub": email}, expires_delta=timedelta(minutes=REFRESH_TOKEN_EXPIRE_DAYS), refresh=True
+            data={"sub": email}, expires_delta=timedelta(minutes=Settings.REFRESH_TOKEN_EXPIRE_DAYS), refresh=True
         )
         return RefreshToken(access_token=access_token, token_type="bearer", refresh_token=refresh_token)
 
@@ -82,11 +71,11 @@ class AuthenticationService:
             expire = datetime.now(timezone.utc) + expires_delta
         else:
             if(refresh):
-                expire = datetime.now(timezone.utc) + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
+                expire = datetime.now(timezone.utc) + timedelta(days=Settings.REFRESH_TOKEN_EXPIRE_DAYS)
             else:
                 expire = datetime.now(timezone.utc) + timedelta(minutes=15)
         to_encode.update({"exp": expire})
-        encoded_jwt = jwt.encode(to_encode, self.get_secret_key(), algorithm=ALGORITHM)
+        encoded_jwt = jwt.encode(to_encode, self.get_secret_key(), algorithm=Settings.algorithm)
         return encoded_jwt
     
     def refresh_access_token(self, refresh_token: str) -> RefreshToken:
@@ -106,7 +95,7 @@ class AuthenticationService:
                     detail="Invalid refresh token",
                     headers={"WWW-Authenticate": "Bearer"},
                 )
-            access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+            access_token_expires = timedelta(minutes=Settings.ACCESS_TOKEN_EXPIRE_MINUTES)
             access_token = self.create_access_token(
                 data={"sub": user.email}, expires_delta=access_token_expires
             )
