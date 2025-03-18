@@ -1,10 +1,13 @@
 from sqlalchemy import String
 from sqlalchemy.orm import relationship, Mapped, mapped_column
+from typing import TYPE_CHECKING
 
-from app.models.guarantor import Guarantor
-from app.models.property import Property
-from app.models.property_manager import PropertyManager
-from app.models.tenant import Tenant
+if TYPE_CHECKING:
+    from app.models.tenant import Tenant
+    from app.models.property import Property
+    from app.models.guarantor import Guarantor
+    from app.models.property_manager import PropertyManager
+
 from .base import Base
 
 

@@ -1,10 +1,13 @@
 from sqlalchemy import ForeignKey, Integer, String
 from sqlalchemy.orm import relationship, Mapped, mapped_column
+from typing import TYPE_CHECKING, List
 
-from app.models.address import Address
-from app.models.inventory import Inventory
-from app.models.property_manager import PropertyManager
-from app.models.rental import Rental
+if TYPE_CHECKING:
+    from app.models.address import Address
+    from app.models.inventory import Inventory
+    from app.models.property_manager import PropertyManager
+    from app.models.rental import Rental
+
 from .base import Base
 
 
@@ -18,5 +21,5 @@ class Property(Base):
 
     address: Mapped["Address"] = relationship("Address", back_populates="properties")
     property_manager: Mapped["PropertyManager"] = relationship("PropertyManager", back_populates="properties")
-    inventories: Mapped[list["Inventory"]] = relationship("Inventory", back_populates="property")
-    rentals: Mapped[list["Rental"]] = relationship("Rental", back_populates="property")
+    inventories: Mapped[List["Inventory"]] = relationship("Inventory", back_populates="property")
+    rentals: Mapped[List["Rental"]] = relationship("Rental", back_populates="property")

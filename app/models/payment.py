@@ -1,8 +1,11 @@
 from sqlalchemy import Boolean, ForeignKey, Integer
 from sqlalchemy.orm import relationship, Mapped, mapped_column
+from typing import TYPE_CHECKING
 
-from app.models.rental import Rental
-from app.models.tenant import Tenant
+if TYPE_CHECKING:
+    from app.models.rental import Rental
+    from app.models.tenant import Tenant
+
 from .base import Base
 
 

@@ -1,9 +1,12 @@
 from sqlalchemy import ForeignKey, Integer, String
 from sqlalchemy.orm import relationship, Mapped, mapped_column
+from typing import TYPE_CHECKING, List
 
-from app.models.address import Address
-from app.models.property import Property
-from app.models.user import User
+if TYPE_CHECKING:
+    from app.models.address import Address
+    from app.models.property import Property
+    from app.models.user import User
+
 from .base import Base
 
 
@@ -20,4 +23,4 @@ class PropertyManager(Base):
 
     address: Mapped["Address"] = relationship("Address", back_populates="property_managers")
     user: Mapped["User"] = relationship("User", back_populates="property_managers")
-    properties: Mapped[list["Property"]] = relationship("Property", back_populates="property_manager")
+    properties: Mapped[List["Property"]] = relationship("Property", back_populates="property_manager")

@@ -115,7 +115,6 @@ strict_optional = true
 follow_imports = "silent"
 disallow_any_generics = true
 no_implicit_reexport = true
-
 plugins = ["pydantic.mypy"]
 
 [tool.pydantic-mypy]

@@ -1,7 +1,10 @@
 from sqlalchemy import JSON, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship, Mapped, mapped_column
+from typing import TYPE_CHECKING
 
-from app.models.property import Property
+if TYPE_CHECKING:
+    from app.models.property import Property
+
 from .base import Base
 
 

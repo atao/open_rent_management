@@ -1,9 +1,12 @@
 from sqlalchemy import Integer, DateTime, ForeignKey, String
 from sqlalchemy.orm import relationship, Mapped, mapped_column
+from typing import TYPE_CHECKING
 
-from app.models.payment import Payment
-from app.models.property import Property
-from app.models.tenant import Tenant
+if TYPE_CHECKING:
+    from app.models.payment import Payment
+    from app.models.property import Property
+    from app.models.tenant import Tenant
+
 from .base import Base
 
 

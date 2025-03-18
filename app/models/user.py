@@ -1,9 +1,12 @@
+from typing import List, TYPE_CHECKING
 from sqlalchemy import Boolean, String
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 
 from app.models.property_manager import PropertyManager
-from app.models.tenant import Tenant
 from .base import Base
+
+if TYPE_CHECKING:
+    from app.models.tenant import Tenant
 
 
 class User(Base):
@@ -15,5 +18,5 @@ class User(Base):
     disabled: Mapped[bool] = mapped_column(Boolean, default=False)
     # TODO ADD ROLE
 
-    tenants: Mapped[list["Tenant"]] = relationship("Tenant", back_populates="user")
-    property_managers: Mapped[list["PropertyManager"]] = relationship("PropertyManager", back_populates="user")
+    tenants: Mapped[List["Tenant"]] = relationship("Tenant", back_populates="user")
+    property_managers: Mapped[List["PropertyManager"]] = relationship("PropertyManager", back_populates="user")
