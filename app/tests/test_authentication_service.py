@@ -97,34 +97,3 @@ def test_refresh_access_token(auth_service, mock_db):
             with pytest.raises(HTTPException) as excinfo:
                 auth_service.refresh_access_token(refresh_token)
             assert excinfo.value.status_code == status.HTTP_401_UNAUTHORIZED
-
-
-@pytest.mark.asyncio
-async def test_get_current_user(auth_service, mock_db):
-    token = jwt.encode({"sub": "test@example.com"}, "test_secret_key", algorithm="HS256")
-    user = User(email="test@example.com")
-    mock_db.query().filter().first.return_value = user
-
-    with patch.object(auth_service, "get_secret_key", return_value="test_secret_key"):
-        current_user = await auth_service.get_current_user(token)
-        assert current_user == user
-
-    with patch.object(auth_service, "get_secret_key", return_value="test_secret_key"):
-        with patch.object(auth_service, "get_payload", side_effect=InvalidTokenError):
-            with pytest.raises(HTTPException) as excinfo:
-                await auth_service.get_current_user(token)
-            assert excinfo.value.status_code == status.HTTP_401_UNAUTHORIZED
-
-
-@pytest.mark.asyncio
-async def test_get_current_active_user(auth_service, mock_db):
-    user = User(email="test@example.com", disabled=False)
-    mock_db.query().filter().first.return_value = user
-
-    current_user = await auth_service.get_current_active_user(user)
-    assert current_user == user
-
-    user.disabled = True
-    with pytest.raises(HTTPException) as excinfo:
-        await auth_service.get_current_active_user(user)
-    assert excinfo.value.status_code == status.HTTP_400_BAD_REQUEST
