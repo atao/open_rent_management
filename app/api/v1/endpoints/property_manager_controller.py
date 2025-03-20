@@ -1,7 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from app.core.auth import get_current_active_user
 from app.core.dependencies import get_db
 from app.models.property_manager import PropertyManager
+from app.models.user import User
 from app.schemas.property_manager_create import PropertyManagerCreate
 from app.schemas.property_manager_update import PropertyManagerUpdate
 
@@ -9,7 +11,11 @@ router = APIRouter()
 
 
 @router.post("/property_manager/")
-def create_property_manager(property_manager_create: PropertyManagerCreate, db: Session = Depends(get_db)):
+def create_property_manager(
+    property_manager_create: PropertyManagerCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
     property_manager = PropertyManager(**property_manager_create.model_dump())
     existing_property_manager = (
         db.query(PropertyManager).filter(PropertyManager.email == property_manager.email).first()
@@ -27,6 +33,7 @@ def update_property_manager(
     property_manager_id: int,
     property_manager_update: PropertyManagerUpdate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
 ):
     property_manager = db.query(PropertyManager).filter(PropertyManager.id == property_manager_id).first()
     if property_manager is None:
@@ -40,7 +47,9 @@ def update_property_manager(
 
 
 @router.delete("/property_manager/{property_manager_id}")
-def delete_property_manager(property_manager_id: int, db: Session = Depends(get_db)):
+def delete_property_manager(
+    property_manager_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_active_user)
+):
     property_manager = db.query(PropertyManager).filter(PropertyManager.id == property_manager_id).first()
     if property_manager is None:
         raise HTTPException(status_code=404, detail="PropertyManager not found")
@@ -50,7 +59,7 @@ def delete_property_manager(property_manager_id: int, db: Session = Depends(get_
 
 
 @router.get("/property_managers/")
-def get_property_managers(db: Session = Depends(get_db)):
+def get_property_managers(db: Session = Depends(get_db), current_user: User = Depends(get_current_active_user)):
     property_managers = db.query(PropertyManager).all()
     if property_managers is None or len(property_managers) == 0:
         raise HTTPException(status_code=404, detail="PropertyManagers not found")
@@ -58,7 +67,9 @@ def get_property_managers(db: Session = Depends(get_db)):
 
 
 @router.get("/property_manager/{property_manager_id}")
-def get_property_manager_by_id(property_manager_id: int, db: Session = Depends(get_db)):
+def get_property_manager_by_id(
+    property_manager_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_active_user)
+):
     property_manager = db.query(PropertyManager).filter(PropertyManager.id == property_manager_id).first()
     if property_manager is None:
         raise HTTPException(status_code=404, detail="PropertyManager not found")

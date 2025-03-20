@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm
 
+from app.core.auth import get_auth_service, get_current_active_user
 from app.core.dependencies import get_db
 from app.models.user import User
 from app.schemas.token import RefreshToken, Token
@@ -9,14 +10,7 @@ from app.schemas.user_response import UserResponse
 from app.services.authentication_service import AuthenticationService
 from sqlalchemy.orm import Session
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/token")
-
 db = Depends(get_db)
-
-
-def get_auth_service(db: Session = Depends(get_db)):
-    return AuthenticationService(oauth2_scheme, db)
-
 
 router = APIRouter()
 
@@ -43,11 +37,12 @@ async def refresh_access_token(
     return auth_service.refresh_access_token(refresh_token)
 
 
-@router.post("/register/")
+@router.post("/register")
 async def create_user(
     user_in: UserCreate,
     db: Session = Depends(get_db),
     auth_service: AuthenticationService = Depends(get_auth_service),
+    current_user: User = Depends(get_current_active_user),
 ) -> UserResponse:
     if user_in.email is None or user_in.password is None or user_in.password_confirm is None:
         raise HTTPException(
@@ -73,13 +68,11 @@ async def create_user(
     return UserResponse.model_validate(user)
 
 
-@router.post("/logout/")
+@router.post("/logout")
 async def logout(refresh_token: str, auth_service: AuthenticationService = Depends(get_auth_service)):
     return HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Logout is not implemented")
 
 
-@router.get("/users/me/")
-async def read_users_me(
-    current_user: User = Depends(get_auth_service().get_current_active_user),
-):
+@router.get("/users/me")
+async def read_users_me(current_user: User = Depends(get_current_active_user)):
     return current_user

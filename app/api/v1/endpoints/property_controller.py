@@ -1,8 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from app.core.auth import get_current_active_user
 from app.core.dependencies import get_db
 from app.models.property import Property
 from app.models.property_manager import PropertyManager
+from app.models.user import User
 from app.schemas.property_create import PropertyCreate
 from app.schemas.property_update import PropertyUpdate
 
@@ -10,7 +12,11 @@ router = APIRouter()
 
 
 @router.post("/property/")
-def create_property(property_create: PropertyCreate, db: Session = Depends(get_db)):
+def create_property(
+    property_create: PropertyCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
     property = Property(**property_create.model_dump())
     property_manager = (
         db.query(PropertyManager).filter(PropertyManager.id == property_create.property_manager_id).first()
@@ -24,7 +30,12 @@ def create_property(property_create: PropertyCreate, db: Session = Depends(get_d
 
 
 @router.put("/property/{property_id}")
-def update_property(property_id: int, property_update: PropertyUpdate, db: Session = Depends(get_db)):
+def update_property(
+    property_id: int,
+    property_update: PropertyUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
     property = db.query(Property).filter(Property.id == property_id).first()
     if property is None:
         raise HTTPException(status_code=404, detail="Property not found")
@@ -42,7 +53,9 @@ def update_property(property_id: int, property_update: PropertyUpdate, db: Sessi
 
 
 @router.delete("/property/{property_id}")
-def delete_property(property_id: int, db: Session = Depends(get_db)):
+def delete_property(
+    property_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_active_user)
+):
     property = db.query(Property).filter(Property.id == property_id).first()
     if property is None:
         raise HTTPException(status_code=404, detail="Property not found")
@@ -52,7 +65,7 @@ def delete_property(property_id: int, db: Session = Depends(get_db)):
 
 
 @router.get("/properties/")
-def get_propertys(db: Session = Depends(get_db)):
+def get_propertys(db: Session = Depends(get_db), current_user: User = Depends(get_current_active_user)):
     propertys = db.query(Property).all()
     if propertys is None or len(propertys) == 0:
         raise HTTPException(status_code=404, detail="Propertys not found")
@@ -60,7 +73,9 @@ def get_propertys(db: Session = Depends(get_db)):
 
 
 @router.get("/property/{property_id}")
-def get_property_by_id(property_id: int, db: Session = Depends(get_db)):
+def get_property_by_id(
+    property_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_active_user)
+):
     property = db.query(Property).filter(Property.id == property_id).first()
     if property is None:
         raise HTTPException(status_code=404, detail="Property not found")
