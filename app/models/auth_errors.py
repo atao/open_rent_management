@@ -1,0 +1,11 @@
+class AuthError:
+    INVALID_CREDENTIALS: str = "Invalid credentials"
+    COULD_NOT_VALIDATE_CREDENTIALS: str = "Could not validate credentials"
+    INVALID_REFRESH_TOKEN: str = "Invalid refresh token"
+    REFRESH_TOKEN_EXPIRED: str = "Refresh token expired"
+    USER_NOT_FOUND: str = "User not found"
+    USER_DISABLED: str = "User is disabled"
+    PASSWORD_TOO_WEAK: str = "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit and one special character"
+    EMAIL_ALREADY_REGISTERED: str = "Email already registered"
+    PASSWORDS_DO_NOT_MATCH: str = "Passwords do not match"
+    EMAIL_PASSWORD_REQUIRED: str = "Email and password are required"

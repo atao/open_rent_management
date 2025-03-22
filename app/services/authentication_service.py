@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta, timezone
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from typing_extensions import Annotated
 from passlib.context import CryptContext
@@ -8,6 +8,7 @@ import jwt
 from sqlalchemy.orm import Session
 
 from app.core.config import Settings
+from app.models.auth_errors import AuthError
 from app.models.user import User
 from app.schemas.token import RefreshToken, TokenData
 
@@ -27,10 +28,13 @@ class AuthenticationService:
             raise ValueError("SECRET_KEY environment variable is not set")
         return Settings.secret_key
 
-    def get_payload(self, token: str):
+    def get_username_from_payload(self, token: str):
         if token is None:
             return None
-        return jwt.decode(token, self.get_secret_key(), algorithms=[Settings.algorithm])
+        payload = jwt.decode(token, self.get_secret_key(), algorithms=[Settings.algorithm])
+        if payload is None:
+            return None
+        return payload.get("sub")
 
     def verify_password(self, plain_password, hashed_password):
         return self.pwd_context.verify(plain_password, hashed_password)
@@ -44,9 +48,12 @@ class AuthenticationService:
             return False
         if not self.verify_password(password, user.password):
             return False
+        if user.disabled:
+            raise Exception(AuthError.USER_DISABLED)
         return user
 
-    def is_password_secure(self, password: str):
+    @staticmethod
+    def is_password_secure(password: str) -> bool:
         if len(password) < 8:
             return False
         if not any(char.isupper() for char in password):
@@ -91,21 +98,12 @@ class AuthenticationService:
 
     def refresh_access_token(self, refresh_token: str) -> RefreshToken:
         try:
-            payload = self.get_payload(refresh_token)
-            username = payload.get("sub")
+            username = self.get_username_from_payload(refresh_token)
             if username is None:
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Invalid refresh token",
-                    headers={"WWW-Authenticate": "Bearer"},
-                )
+                raise Exception(AuthError.INVALID_REFRESH_TOKEN)
             user = self.db.query(User).filter(User.email == username).first()
             if user is None:
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Invalid refresh token",
-                    headers={"WWW-Authenticate": "Bearer"},
-                )
+                raise Exception(AuthError.INVALID_REFRESH_TOKEN)
             access_token_expires = timedelta(minutes=Settings.ACCESS_TOKEN_EXPIRE_MINUTES)
             access_token = self.create_access_token(data={"sub": user.email}, expires_delta=access_token_expires)
             return RefreshToken(
@@ -114,35 +112,21 @@ class AuthenticationService:
                 token_type="bearer",
             )
         except jwt.ExpiredSignatureError:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Refresh token expired",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
+            raise Exception(AuthError.REFRESH_TOKEN_EXPIRED)
         except jwt.InvalidTokenError:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid refresh token",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
+            raise Exception(AuthError.INVALID_REFRESH_TOKEN)
 
     def get_current_active_user(self, token: str) -> User:
-        credentials_exception = HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
         try:
-            payload = self.get_payload(token)
-            username = payload.get("sub")
+            username = self.get_username_from_payload(token)
             if username is None:
-                raise credentials_exception
+                raise Exception(AuthError.COULD_NOT_VALIDATE_CREDENTIALS)
             token_data = TokenData(username=username)
         except InvalidTokenError:
-            raise credentials_exception
+            raise Exception(AuthError.COULD_NOT_VALIDATE_CREDENTIALS)
         user = self.db.query(User).filter(User.email == token_data.username).first()
         if user is None:
-            raise credentials_exception
+            raise Exception(AuthError.COULD_NOT_VALIDATE_CREDENTIALS)
         if user.disabled:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive user")
+            raise Exception(AuthError.USER_DISABLED)
         return user
