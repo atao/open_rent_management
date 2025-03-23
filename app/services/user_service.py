@@ -23,11 +23,11 @@ class UserService:
             raise Exception(AuthError.EMAIL_PASSWORD_REQUIRED)
         if self.db.query(User).filter(User.email == user_in.email).first():
             raise Exception(AuthError.EMAIL_ALREADY_REGISTERED)
+        if user_in.password != user_in.password_confirm:
+            raise Exception(AuthError.PASSWORDS_DO_NOT_MATCH)
         is_password_secure = AuthenticationService.is_password_secure(user_in.password)
         if not is_password_secure:
             raise Exception(AuthError.PASSWORD_TOO_WEAK)
-        if user_in.password != user_in.password_confirm:
-            raise Exception(AuthError.PASSWORDS_DO_NOT_MATCH)
         hashed_password = self.auth_service.get_password_hash(user_in.password)
         user_data = user_in.model_dump(exclude={"password", "password_confirm"})
         user = User(**user_data, password=hashed_password)

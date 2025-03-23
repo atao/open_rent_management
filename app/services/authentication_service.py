@@ -46,10 +46,10 @@ class AuthenticationService:
         user = self.db.query(User).filter(User.email == email).first()
         if not user:
             return False
-        if not self.verify_password(password, user.password):
-            return False
         if user.disabled:
             raise Exception(AuthError.USER_DISABLED)
+        if not self.verify_password(password, user.password):
+            return False
         return user
 
     @staticmethod
