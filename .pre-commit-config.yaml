@@ -1,0 +1,47 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: check-ast
+      - id: check-builtin-literals
+      - id: check-docstring-first
+        exclude: tests
+      - id: check-merge-conflict
+      - id: check-yaml
+        args: [--allow-multiple-documents, --unsafe]
+      - id: check-toml
+      - id: end-of-file-fixer
+      - id: check-json
+      - id: check-added-large-files
+      - id: debug-statements
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: "v1.15.0"
+    hooks:
+      - id: mypy
+        name: mypy
+        files: ^app
+        args: ["--config-file", "pyproject.toml", "--show-traceback"]
+        additional_dependencies:
+          - mypy-extensions==1.0.0
+          - pydantic>=2.0.0
+          - sqlalchemy>=2.0.23
+        
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.7.1
+    hooks:
+      - id: ruff
+        name: ruff
+        files: ^app/
+        args: ["--fix", "--config=pyproject.toml"]
+      - id: ruff-format
+        name: ruff-format
+        files: ^app
+        args: ["--config=pyproject.toml"]
+  - repo: https://github.com/psf/black
+    rev: 23.3.0
+    hooks:
+      - id: black
+        name: black
+        language_version: python3.12
+        files: ^app/
+        args: ["--config", "pyproject.toml"]

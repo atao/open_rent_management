@@ -8,15 +8,15 @@ from sqlalchemy import pool
 from alembic import context
 
 from app.models import Base
-from app.models.tenant import Tenant
-from app.models.rental import Rental
-from app.models.address import Address
-from app.models.guarantor import Guarantor
-from app.models.inventory import Inventory
-from app.models.property import Property
-from app.models.payment import Payment
-from app.models.user import User
-from app.models.property_manager import PropertyManager
+from app.models.tenant import Tenant  # noqa: F401
+from app.models.rental import Rental  # noqa: F401
+from app.models.address import Address  # noqa: F401
+from app.models.guarantor import Guarantor  # noqa: F401
+from app.models.inventory import Inventory  # noqa: F401
+from app.models.property import Property  # noqa: F401
+from app.models.payment import Payment  # noqa: F401
+from app.models.user import User  # noqa: F401
+from app.models.property_manager import PropertyManager  # noqa: F401
 
 # Load environment variables
 load_dotenv()
@@ -32,7 +32,7 @@ pg_db = os.getenv("PG_DB")
 pg_port = os.getenv("PG_PORT")
 database_url = f"postgresql://{pg_user}:{pg_password}@{pg_host}:{pg_port}/{pg_db}"
 
-config.set_main_option('sqlalchemy.url', database_url)
+config.set_main_option("sqlalchemy.url", database_url)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -90,9 +90,7 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()

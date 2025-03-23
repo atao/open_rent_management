@@ -6,6 +6,7 @@ from .property_create import PropertyCreate
 from .property_update import PropertyUpdate
 from .address_create import AddressCreate
 from .address_update import AddressUpdate
+
 # from .rental_create import RentalCreate
 # from .address_create import AddressCreate
 # from .guarantor_create import GuarantorCreate
@@ -24,11 +25,12 @@ __all__ = [
     "PropertyUpdate",
     "AddressCreate",
     "AddressUpdate",
+    "UserCreate",
+    "UserBase",
     # "RentalCreate",
     # "AddressCreate",
     # "GuarantorCreate",
     # "InventoryCreate",
     # "PropertyCreate",
     # "PaymentCreate",
-    # "UserCreate",
 ]

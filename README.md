@@ -4,17 +4,22 @@ This is a FastAPI project for managing properties.
 
 ## Installation
 
-1. Create a virtual environment:
+1. Install Poetry:
     ```bash
-    python3 -m venv venv
-    source venv/bin/activate
+    pip install poetry
     ```
 
 2. Install dependencies:
     ```bash
-    pip install -r requirements.txt
+    poetry install
     ```
-3. Create an env file and customize variables
+
+3. Use virtual env:
+    ```bash
+    poetry env activate
+    ```
+
+4. Create an env file and customize variables
     ```bash
     cp .env.sample .env
     ```
@@ -24,7 +29,7 @@ This is a FastAPI project for managing properties.
 ```bash
 docker-compose up -d
 
-uvicorn app.main:app --reload
+poetry run runserver
 
 ## Use Alembic to create migrations and update database model
 
