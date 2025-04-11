@@ -14,12 +14,8 @@ This is a FastAPI project for managing properties.
     poetry install
     ```
 
-3. Use virtual env:
-    ```bash
-    poetry env activate
-    ```
 
-4. Create an env file and customize variables
+3. Create an env file and customize variables
     ```bash
     cp .env.sample .env
     ```
