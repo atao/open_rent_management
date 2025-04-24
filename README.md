@@ -6,22 +6,37 @@ This is a FastAPI project for managing properties.
 
 1. Install Poetry:
     ```bash
-    pip install poetry
+    curl -sSL https://install.python-poetry.org | python3 -
     ```
-
-2. Install dependencies:
+2. Check for Virtual Environment
+    ```bash
+    poetry env list
+    ```
+3. Install dependencies:
     ```bash
     poetry install
     ```
 
-3. Use virtual env:
+3. Activate the Virtual Environment
     ```bash
-    poetry env activate
+    poetry shell
     ```
+    If `poetry shell` works, you don't need to use `poetry env activate` directly.
 
 4. Create an env file and customize variables
     ```bash
     cp .env.sample .env
+    ```
+
+5. Run the Application
+    ```bash
+    docker-compose up -d
+    poetry run runserver
+    ```
+
+6. Verify the Application
+    ```bash
+    curl http://127.0.0.1:8000
     ```
 
 ## Running the app
