@@ -1,14 +1,19 @@
 [project]
 name = "open-rent-management"
 version = "0.1.0"
-description = ""
+description = "A rental management application built with FastAPI."
 authors = [
-    {name = "Baron Blanc"}
+    {name = "Baron Blanc", email = "baron.blanc@example.com"}
 ]
 readme = "README.md"
 requires-python = ">=3.12"
 
 [tool.poetry]
+name = "open-rent-management"
+version = "0.1.0"
+description = "A rental management application built with FastAPI."
+authors = ["Baron Blanc <baron.blanc@example.com>"]
+readme = "README.md"
 packages = [
     { include = "app" }
 ]
